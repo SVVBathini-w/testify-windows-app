@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Testify Desktop</title>
+    <style>
+      body {
+        font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+        margin: 0;
+        padding: 24px;
+        background: #0b0d10;
+        color: #e6edf3;
+      }
+      .card {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 20px;
+        border: 1px solid #222a35;
+        background: #0f141b;
+        border-radius: 12px;
+      }
+      h1 {
+        margin-top: 0;
+        font-size: 22px;
+      }
+      label {
+        display: block;
+        margin-top: 14px;
+        margin-bottom: 6px;
+        color: #9fb1c1;
+      }
+      input {
+        width: 100%;
+        padding: 10px 12px;
+        border-radius: 10px;
+        border: 1px solid #263244;
+        background: #0b0f14;
+        color: #e6edf3;
+        outline: none;
+      }
+      button {
+        margin-top: 14px;
+        padding: 10px 14px;
+        border-radius: 10px;
+        border: 1px solid #2a3a52;
+        background: #132033;
+        color: #e6edf3;
+        cursor: pointer;
+      }
+      button:hover {
+        background: #162743;
+      }
+      .row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+      .muted {
+        color: #9fb1c1;
+        font-size: 13px;
+        line-height: 1.4;
+      }
+      .log {
+        margin-top: 16px;
+        padding: 12px;
+        background: #0b0f14;
+        border: 1px solid #263244;
+        border-radius: 10px;
+        white-space: pre-wrap;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+          "Courier New", monospace;
+        font-size: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h1>Testify Desktop (Prototype)</h1>
+      <p class="muted">
+        Goal: run interactive capture locally (Windows) and send artifacts to the server. This is a
+        starter shell; next step is wiring interactive capture helper + upload.
+      </p>
+
+      <div class="row">
+        <div>
+          <label>Server Base URL</label>
+          <input id="serverUrl" value="http://127.0.0.1:8001" />
+        </div>
+        <div>
+          <label>Start URL (target site/app)</label>
+          <input id="startUrl" placeholder="https://example.com/login" />
+        </div>
+      </div>
+
+      <div class="row">
+        <button id="openExternal">Open Start URL in default browser</button>
+        <button id="startCapture">Start Capture (Playwright headed)</button>
+      </div>
+      <button id="stopCapture">Stop Capture (save storage_state.json)</button>
+      <div class="muted">
+        Default browser is just for convenience. For reliable capture, use Playwright-headed capture.
+        It will create a capture folder with <code>storage_state.json</code> and optionally
+        <code>trace.zip</code>.
+      </div>
+
+      <div class="log" id="log"></div>
+    </div>
+
+    <script>
+      const logEl = document.getElementById("log");
+      function log(msg) {
+        logEl.textContent += msg + "\n";
+      }
+
+      function getStartUrl() {
+        return document.getElementById("startUrl").value.trim();
+      }
+
+      document.getElementById("openExternal").addEventListener("click", async () => {
+        const url = getStartUrl();
+        if (!url) {
+          log("ERROR: start URL required");
+          return;
+        }
+        const res = await window.testify.openExternal(url);
+        log(JSON.stringify(res));
+      });
+
+      document.getElementById("startCapture").addEventListener("click", async () => {
+        const url = getStartUrl();
+        if (!url) {
+          log("ERROR: start URL required");
+          return;
+        }
+        const res = await window.testify.captureStart({ startUrl: url, trace: true });
+        log("captureStart => " + JSON.stringify(res, null, 2));
+      });
+
+      document.getElementById("stopCapture").addEventListener("click", async () => {
+        const res = await window.testify.captureStop({ saveTrace: true });
+        log("captureStop => " + JSON.stringify(res, null, 2));
+      });
+
+      log("Ready.");
+    </script>
+  </body>
+</html>

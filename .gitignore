@@ -1,0 +1,13 @@
+# dependencies
+node_modules/
+
+# builds
+/dist/
+/ui/build/
+
+# local captures/artifacts
+captures/
+
+# OS/editor
+.DS_Store
+*.log

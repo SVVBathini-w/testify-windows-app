@@ -1,0 +1,51 @@
+{
+  "name": "testify-app",
+  "version": "0.1.0",
+  "description": "Testify desktop app (Windows) for interactive capture and server orchestration",
+  "main": "src/main/main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "electron .",
+    "dev": "electron .",
+    "ui:install": "npm --prefix ui ci",
+    "ui:build": "npm --prefix ui run build",
+    "dist": "npm run ui:build && electron-builder",
+    "dist:win": "npm run ui:build && electron-builder --win",
+    "lint": "echo 'no lint yet'"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "build": {
+    "appId": "com.testify.desktop",
+    "productName": "Testify",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "src/**",
+      "ui/build/**",
+      "package.json"
+    ],
+    "asar": true,
+    "win": {
+      "target": [
+        "nsis"
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true
+    }
+  },
+  "devDependencies": {
+    "electron": "^34.5.8",
+    "electron-builder": "^25.1.8",
+    "which": "^5.0.0"
+  },
+  "dependencies": {
+    "adm-zip": "^0.5.16",
+    "playwright": "^1.58.2"
+  }
+}
