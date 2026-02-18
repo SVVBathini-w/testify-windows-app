@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "../css/Inputs.module.css";
 
@@ -11,7 +11,9 @@ export default function LocalRun() {
   const electron = useMemo(() => isElectron(), []);
 
   const [log, setLog] = useState("Ready.\n");
-  const [serverUrl, setServerUrl] = useState("http://127.0.0.1:8001");
+  const [serverUrl, setServerUrl] = useState(
+    localStorage.getItem("TESTIFY_SERVER_URL") || "http://127.0.0.1:8002",
+  );
   const [token, setToken] = useState("");
   const [zipPath, setZipPath] = useState("");
   const [projectDir, setProjectDir] = useState("");
@@ -20,6 +22,14 @@ export default function LocalRun() {
   const [runId, setRunId] = useState("");
 
   const append = (msg) => setLog((prev) => prev + String(msg) + "\n");
+
+  useEffect(() => {
+    try {
+      localStorage.setItem("TESTIFY_SERVER_URL", serverUrl);
+    } catch {
+      // ignore
+    }
+  }, [serverUrl]);
 
   const pickZip = async () => {
     if (!electron) return;
