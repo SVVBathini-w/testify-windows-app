@@ -2,7 +2,7 @@ import './App.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import 'react-toastify/dist/ReactToastify.css';
 
-import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
+import { BrowserRouter, HashRouter, Route, Routes, Navigate } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 
 import Home from './components/home';
@@ -21,8 +21,10 @@ const ProtectedRoute = ({ children }) => {
 };
 
 function App() {
+  const Router = typeof window !== "undefined" && window.testify ? HashRouter : BrowserRouter;
+
   return (
-    <BrowserRouter>
+    <Router>
       <Routes>
         <Route path='/login' element={<Login />} />
         <Route path='/signup' element={<Signup />} />
@@ -120,7 +122,7 @@ function App() {
 
       </Routes>
       <ToastContainer position="top-right" autoClose={4000} newestOnTop closeOnClick pauseOnHover draggable theme="colored" />
-    </BrowserRouter>
+    </Router>
   );
 }
 
