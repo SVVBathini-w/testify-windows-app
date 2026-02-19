@@ -276,7 +276,7 @@ async function startManual({ startUrl, serverBaseUrl, token, projectId } = {}) {
   _page = await _context.newPage();
 
   // Expose binding for the modal button
-  await _page.expose_binding("testify_enrich_now", async (_source, payload) => {
+  await _page.exposeBinding("testify_enrich_now", async (_source, payload) => {
     try {
       const pageName = (payload && payload.pageName ? String(payload.pageName) : "page").trim() || "page";
       const domData = await _extractDom(_page, pageName);
