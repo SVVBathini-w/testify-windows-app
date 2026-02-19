@@ -8,6 +8,12 @@ contextBridge.exposeInMainWorld("testify", {
   captureStop: (payload) => ipcRenderer.invoke("capture:stop", payload),
   captureStatus: () => ipcRenderer.invoke("capture:status"),
 
+  // Local enrichment (headed browser on Windows)
+  enrichAutoStart: (payload) => ipcRenderer.invoke("enrich:auto", payload),
+  enrichManualStart: (payload) => ipcRenderer.invoke("enrich:manual", payload),
+  enrichStop: () => ipcRenderer.invoke("enrich:stop"),
+  enrichStatus: () => ipcRenderer.invoke("enrich:status"),
+
   // Dialog helpers
   openFile: (options) => ipcRenderer.invoke("dialog:open-file", options),
 

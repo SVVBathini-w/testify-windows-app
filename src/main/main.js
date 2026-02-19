@@ -1,6 +1,7 @@
 const { app, BrowserWindow, ipcMain, shell, dialog } = require("electron");
 const path = require("path");
 const capture = require("./capture");
+const localEnrich = require("./local_enrich");
 const pythonRunner = require("./python_runner");
 const bundle = require("./bundle");
 const serverClient = require("./server_client");
@@ -67,6 +68,37 @@ ipcMain.handle("capture:stop", async (_evt, payload) => {
 
 ipcMain.handle("capture:status", async () => {
   return { ok: true, running: capture.isRunning() };
+});
+
+// --- Local enrichment ---
+ipcMain.handle("enrich:auto", async (_evt, payload) => {
+  try {
+    const res = await localEnrich.startAuto(payload || {});
+    return res;
+  } catch (e) {
+    return { ok: false, error: String(e && e.message ? e.message : e) };
+  }
+});
+
+ipcMain.handle("enrich:manual", async (_evt, payload) => {
+  try {
+    const res = await localEnrich.startManual(payload || {});
+    return res;
+  } catch (e) {
+    return { ok: false, error: String(e && e.message ? e.message : e) };
+  }
+});
+
+ipcMain.handle("enrich:stop", async () => {
+  try {
+    return await localEnrich.stop();
+  } catch (e) {
+    return { ok: false, error: String(e && e.message ? e.message : e) };
+  }
+});
+
+ipcMain.handle("enrich:status", async () => {
+  return { ok: true, running: localEnrich.isRunning() };
 });
 
 ipcMain.handle("dialog:open-file", async (_evt, options) => {

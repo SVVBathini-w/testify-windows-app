@@ -46,6 +46,26 @@ const URLInput = ({ onBack, onNext, apiMode = "ocr" }) => {
     setFullTestData(null);
 
     try {
+      // Desktop app: run headed browser locally and send DOM captures to server for matching.
+      if (window.testify && window.testify.enrichAutoStart) {
+        const token = localStorage.getItem("token");
+        const projectId = localStorage.getItem("projectId");
+        const res = await window.testify.enrichAutoStart({
+          startUrl: url.trim(),
+          serverBaseUrl: API_BASE_URL,
+          token,
+          projectId,
+          pageName: "page",
+        });
+        if (!res || res.ok === false) {
+          throw new Error(res?.error || "Local auto enrichment failed");
+        }
+        setFullTestData(res.result || res);
+        toast.success("Locators enriched successfully (local browser)");
+        return;
+      }
+
+      // Web fallback: old server-driven behavior.
       const endpoint = apiMode === "url" ? "/url/launch-browser" : "/launch-browser";
       const response = await axios.post(
         `${API_BASE_URL}${endpoint}`,
@@ -57,7 +77,7 @@ const URLInput = ({ onBack, onNext, apiMode = "ocr" }) => {
       setFullTestData(data);
       toast.success("Locators enriched successfully");
     } catch (err) {
-      setError(err.response?.data?.message || "Error enriching locators");
+      setError(err.response?.data?.message || err.message || "Error enriching locators");
     } finally {
       setLoadingEnrich(false);
     }
@@ -73,6 +93,24 @@ const URLInput = ({ onBack, onNext, apiMode = "ocr" }) => {
     setFullTestData(null);
 
     try {
+      // Desktop app: run headed browser locally. Use Alt+Q -> Enrich per page.
+      if (window.testify && window.testify.enrichManualStart) {
+        const token = localStorage.getItem("token");
+        const projectId = localStorage.getItem("projectId");
+        const res = await window.testify.enrichManualStart({
+          startUrl: url.trim(),
+          serverBaseUrl: API_BASE_URL,
+          token,
+          projectId,
+        });
+        if (!res || res.ok === false) {
+          throw new Error(res?.error || "Local manual enrichment failed");
+        }
+        toast.success("Manual enrich started (local browser). Use Alt+Q → Enrich.");
+        return;
+      }
+
+      // Web fallback: old server-driven behavior.
       const response = await axios.post(
         `${API_BASE_URL}/manual/launch-browser`,
         { url: url },
@@ -81,7 +119,7 @@ const URLInput = ({ onBack, onNext, apiMode = "ocr" }) => {
 
       toast.success(response.data?.message || "Manual enrich started");
     } catch (err) {
-      setError(err.response?.data?.message || "Error starting manual enrich");
+      setError(err.response?.data?.message || err.message || "Error starting manual enrich");
     } finally {
       setLoadingManualEnrich(false);
     }
