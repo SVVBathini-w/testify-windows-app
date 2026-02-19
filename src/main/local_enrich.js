@@ -191,6 +191,9 @@ function _modalScripts() {
     m.style.display = (m.style.display==='none' || !m.style.display) ? 'block' : 'none';
   }
 
+  // Expose a stable hook for automation/debugging
+  window.testifyShowModal = toggleModal;
+
   window.addEventListener('keydown', (e) => {
     if(!(e.altKey && (e.key==='q'||e.key==='Q'))) return;
     if(e.ctrlKey||e.metaKey) return;
@@ -198,6 +201,9 @@ function _modalScripts() {
     try{e.preventDefault();e.stopPropagation();}catch(_){ }
     toggleModal();
   }, true);
+
+  // Auto-show once after load to avoid "no modal" confusion.
+  try { setTimeout(() => { try { toggleModal(); } catch(_) {} }, 800); } catch(_) {}
 })();
   `;
 
@@ -293,6 +299,15 @@ async function startManual({ startUrl, serverBaseUrl, token, projectId } = {}) {
   await _context.addInitScript(IFRAME);
 
   await _page.goto(startUrl, { waitUntil: "domcontentloaded", timeout: 90_000 });
+
+  // Extra safety: force-show the modal in case the page swallows Alt+Q.
+  try {
+    await _page.evaluate(() => {
+      try {
+        if (window.testifyShowModal) window.testifyShowModal();
+      } catch {}
+    });
+  } catch {}
 
   return { ok: true, startUrl };
 }
