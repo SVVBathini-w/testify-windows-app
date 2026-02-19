@@ -1,7 +1,9 @@
 
 import React, { useState } from "react";
 
-const API_BASE = "http://localhost:8001";
+import API_BASE_URL from "../config";
+
+const API_BASE = API_BASE_URL;
 
 export default function TestRunner() {
   const [loading, setLoading] = useState(false);

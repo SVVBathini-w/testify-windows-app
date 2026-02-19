@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import styles from "../css/Prompts.module.css";
 import { toast } from "react-toastify";
+import API_BASE_URL from "../config";
 
 // A single prompt editor component
 const PromptEditor = ({ prompt, onContentChange, onSave, isSaving }) => {
@@ -48,7 +49,7 @@ const Prompts = () => {
   const activeProjectIdRef = useRef(projectId);
 
   const token = localStorage.getItem("token");
-  const apiBase = process.env.REACT_APP_API_URL || "http://127.0.0.1:8001";
+  const apiBase = API_BASE_URL;
   const buildHeaders = useCallback(
     (overrideProjectId) => {
       const headers = {};

@@ -13,12 +13,31 @@ Windows desktop companion app for Testify.
 
 ## Run locally (dev)
 
-> Note: Electron GUI won’t run properly on this headless VPS due to Linux sandbox constraints.
-> Development/testing should happen on Windows.
+> Note: Development/testing should happen on Windows.
+
+### 1) Start backend (via SSH tunnel)
+
+This app expects the backend to be reachable at a local URL.
+
+If you are on a restricted network (ports blocked), use an SSH tunnel from Windows to the VPS.
+
+Example (Git Bash on Windows):
+
+```bash
+ssh -N -L 8001:127.0.0.1:8001 vishnu@72.62.226.134
+```
+
+Then confirm:
+- http://127.0.0.1:8001/docs
+
+You can override the backend URL in the UI by setting `localStorage.TESTIFY_SERVER_URL`.
+
+### 2) Run the desktop app
 
 ```bash
 npm install
 npm run ui:install
+npm run ui:build
 npm run dev
 ```
 

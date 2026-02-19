@@ -16,7 +16,7 @@ function readStorage(key) {
 }
 
 const DEFAULT_WEB_API = "http://localhost:8001";
-const DEFAULT_DESKTOP_API = "http://127.0.0.1:8002";
+const DEFAULT_DESKTOP_API = "http://127.0.0.1:8001";
 
 const API_BASE_URL =
   process.env.REACT_APP_API_URL ||

@@ -4,6 +4,7 @@ import Dashboard from "./dashboard";
 import { toast } from "react-toastify";
 import Editor from "@monaco-editor/react";
 import styles from "../css/Home.module.css";
+import API_BASE_URL from "../config";
 
 const formatLabel = (label = "") =>
   label
@@ -57,7 +58,7 @@ const Home = ({ editorOnly = false }) => {
     setEditorValue("");
   };
 
-  const apiBase = process.env.REACT_APP_API_URL || "http://127.0.0.1:8001";
+  const apiBase = API_BASE_URL;
 
   const resolveLanguage = (ext = "") => {
     const map = {
